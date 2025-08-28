@@ -101,6 +101,7 @@ services:
       - data:/mailcow-dockerized
       - docker:/var/lib/docker
       - npm-letsencrypt:/npm-letsencrypt
+    restart: unless-stopped
 
 volumes:
   data:
@@ -124,20 +125,13 @@ Now, we will install Mailcow.
     ```bash
     docker exec -it mailcow /bin/bash
     ```
-
-<!-- 2.  (Inside the container) Clone the Mailcow repository. This only needs to be done once:
-    ```bash
-    git clone https://github.com/mailcow/mailcow-dockerized.git /mailcow-dockerized
-    cd /mailcow-dockerized
-    ``` -->
-
-3.  (Inside the container) Generate the configuration file:
+23.  (Inside the container) Generate the configuration file:
     ```bash
     ./generate_config.sh
     ```
     When prompted, enter your mail hostname (`mail.domain.org`).
 
-4.  (Inside the container) Edit `mailcow.conf` to work with our reverse proxy:
+3.  (Inside the container) Edit `mailcow.conf` to work with our reverse proxy:
     ```bash
     nano mailcow.conf
     ```
@@ -152,7 +146,7 @@ Now, we will install Mailcow.
     ```
     Save the file (Ctrl+X, Y, Enter).
 
-5.  (Inside the container) Pull the Mailcow images and deploy them:
+4.  (Inside the container) Pull the Mailcow images and deploy them:
     ```bash
     docker compose pull
     docker compose up -d
