@@ -1,21 +1,34 @@
 services:
-  mailcow-controller:
-    image: 'debian:bookworm-slim'
-    container_name: mailcow-controller
-    restart: unless-stopped
-    command: /bin/sh -c "apt-get update && apt-get install -y docker-compose-v2 git nano cron && cron && tail -f /dev/null"
+  debian:
+    build:
+      context: https://github.com/procrastinando/MailCow_DinD.git#main
+    container_name: mailcow
+    privileged: true
+    ports:
+      - "25:25"
+      - "8080:8080" # select the port that you prefer
+      - "8443:8443" # select the port that you prefer
+      - "587:587"
+      - "993:993"
+      - "465:465"
+      - "995:995"
+      - "4190:4190"
+    command: /bin/sh -c "dockerd > /dev/null 2>&1 & sleep 2 && tail -f /dev/null"
     networks:
       - npm-network
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
       - data:/mailcow-dockerized
-      - npm-letsencrypt:/npm_letsencrypt:ro
+      - docker:/var/lib/docker
+      - npm-letsencrypt:/npm-letsencrypt
+    restart: unless-stopped
 
 volumes:
   data:
+  docker:
   npm-letsencrypt:
     external: true
 
 networks:
   npm-network:
+    name: npm-network
     external: true

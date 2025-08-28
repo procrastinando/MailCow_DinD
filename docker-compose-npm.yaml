@@ -1,5 +1,5 @@
 services:
-  app:
+  npm:
     image: 'jc21/nginx-proxy-manager:latest'
     container_name: npm
     restart: unless-stopped
@@ -15,7 +15,9 @@ services:
 
 volumes:
   npm-data:
+    name: npm-data
   npm-letsencrypt:
+    name: npm-letsencrypt
 
 networks:
   npm-network:
