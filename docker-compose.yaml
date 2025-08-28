@@ -1,0 +1,21 @@
+services:
+  mailcow-controller:
+    image: 'debian:bookworm-slim'
+    container_name: mailcow-controller
+    restart: unless-stopped
+    command: /bin/sh -c "apt-get update && apt-get install -y docker-compose-v2 git nano cron && cron && tail -f /dev/null"
+    networks:
+      - npm-network
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - data:/mailcow-dockerized
+      - npm-letsencrypt:/npm_letsencrypt:ro
+
+volumes:
+  data:
+  npm-letsencrypt:
+    external: true
+
+networks:
+  npm-network:
+    external: true
