@@ -106,7 +106,7 @@ services:
       - npm-letsencrypt:/npm_letsencrypt:ro
 
 volumes:
-  data
+  data:
   npm-letsencrypt:
     external: true
 
