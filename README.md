@@ -80,37 +80,37 @@ Create a new `docker-compose.yml` file for the controller:
 
 ```yaml
 services:
-  mailcow-controller:
-    image: 'debian:bookworm-slim'
+  app:
+    build:
+      context: https://github.com/procrastinando/MailCow_DinD.git#main
     container_name: mailcow-controller
-    restart: unless-stopped
-    command: >
-      /bin/sh -c "
-      apt-get update && 
-      apt-get install -y ca-certificates curl gnupg git nano cron && 
-      install -m 0755 -d /etc/apt/keyrings && 
-      curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg && 
-      chmod a+r /etc/apt/keyrings/docker.gpg && 
-      echo \"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian bookworm stable\" > /etc/apt/sources.list.d/docker.list && 
-      apt-get update && 
-      apt-get install -y docker-compose-plugin && 
-      cron && 
-      tail -f /dev/null
-      "
+    privileged: true
+    ports:
+      - "25:25"
+      - "82:82" # select the port that you prefer
+      - "8443:8443" # select the port that you prefer
+      - "587:587"
+      - "993:993"
+      - "465:465"
+      - "995:995"
+      - "4190:4190"
+    command: /bin/sh -c "dockerd > /dev/null 2>&1 & sleep 2 && tail -f /dev/null"
     networks:
       - npm-network
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - data:/mailcow-dockerized
-      - npm-letsencrypt:/npm_letsencrypt:ro
+      - mailcow:/mailcow-dockerized
+      - docker:/var/lib/docker
+      - npm_letsencrypt:/npm_letsencrypt
 
 volumes:
-  data:
-  npm-letsencrypt:
+  mailcow:
+  docker:
+  npm_letsencrypt:
     external: true
 
 networks:
   npm-network:
+    name: npm-network
     external: true
 ```
 
