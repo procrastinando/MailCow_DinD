@@ -32,7 +32,7 @@ If you don't have NPM installed, deploy it using the following `docker-compose-n
 
 ```yaml
 services:
-  app:
+  npm:
     image: 'jc21/nginx-proxy-manager:latest'
     container_name: npm
     restart: unless-stopped
@@ -50,7 +50,7 @@ volumes:
   npm-data:
     name: npm-data
   npm-letsencrypt:
-    name: npm-letsencrypt
+    name: npm_letsencrypt
 
 networks:
   npm-network:
@@ -80,14 +80,14 @@ Create a new `docker-compose.yml` file for the controller:
 
 ```yaml
 services:
-  app:
+  debian:
     build:
       context: https://github.com/procrastinando/MailCow_DinD.git#main
     container_name: mailcow-controller
     privileged: true
     ports:
       - "25:25"
-      - "82:82" # select the port that you prefer
+      - "8080:8080" # select the port that you prefer
       - "8443:8443" # select the port that you prefer
       - "587:587"
       - "993:993"
@@ -100,12 +100,12 @@ services:
     volumes:
       - mailcow:/mailcow-dockerized
       - docker:/var/lib/docker
-      - npm_letsencrypt:/npm_letsencrypt
+      - npm-letsencrypt:/npm-letsencrypt
 
 volumes:
   mailcow:
   docker:
-  npm_letsencrypt:
+  npm-letsencrypt:
     external: true
 
 networks:
