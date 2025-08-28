@@ -103,7 +103,7 @@ services:
       - npm-letsencrypt:/npm-letsencrypt
 
 volumes:
-  mailcow:
+  data:
   docker:
   npm-letsencrypt:
     external: true
