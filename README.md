@@ -85,7 +85,19 @@ services:
     image: 'debian:bookworm-slim'
     container_name: mailcow-controller
     restart: unless-stopped
-    command: /bin/sh -c "apt-get update && apt-get install -y docker-compose-v2 git nano cron && cron && tail -f /dev/null"
+    command: >
+      /bin/sh -c "
+      apt-get update && 
+      apt-get install -y ca-certificates curl gnupg git nano cron && 
+      install -m 0755 -d /etc/apt/keyrings && 
+      curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg && 
+      chmod a+r /etc/apt/keyrings/docker.gpg && 
+      echo \"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian bookworm stable\" > /etc/apt/sources.list.d/docker.list && 
+      apt-get update && 
+      apt-get install -y docker-compose-plugin && 
+      cron && 
+      tail -f /dev/null
+      "
     networks:
       - npm-network
     volumes:
@@ -94,7 +106,7 @@ services:
       - npm-letsencrypt:/npm_letsencrypt:ro
 
 volumes:
-  data:
+  data
   npm-letsencrypt:
     external: true
 
