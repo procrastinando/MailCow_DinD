@@ -47,8 +47,11 @@ services:
       - npm-network
 
 volumes:
+volumes:
   npm-data:
+    name: npm-data
   npm-letsencrypt:
+    name: npm-letsencrypt
 
 networks:
   npm-network:
