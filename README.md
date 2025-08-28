@@ -83,7 +83,7 @@ services:
   debian:
     build:
       context: https://github.com/procrastinando/MailCow_DinD.git#main
-    container_name: mailcow-controller
+    container_name: mailcow
     privileged: true
     ports:
       - "25:25"
@@ -98,7 +98,7 @@ services:
     networks:
       - npm-network
     volumes:
-      - mailcow:/mailcow-dockerized
+      - data:/mailcow-dockerized
       - docker:/var/lib/docker
       - npm-letsencrypt:/npm-letsencrypt
 
@@ -122,7 +122,7 @@ Now, we will use the controller to install Mailcow.
 
 1.  Enter the controller container's shell:
     ```bash
-    docker exec -it mailcow-controller /bin/bash
+    docker exec -it mailcow /bin/bash
     ```
 
 2.  (Inside the container) Clone the Mailcow repository. This only needs to be done once:
@@ -157,7 +157,7 @@ Now, we will use the controller to install Mailcow.
     docker compose pull
     docker compose up -d
     ```
-    Mailcow's containers will now start on the host, managed via the controller.
+    Mailcow's containers will now start.
 
 **3.3. Set Up Automatic Certificate Renewal**
 
@@ -185,11 +185,10 @@ This is the most important step for automation. We will create a script inside t
     #!/bin/bash
     
     # --- Configuration ---
-    # !! IMPORTANT !!
     # UPDATE this path to match the certificate directory you found earlier.
     SOURCE_CERT_DIR="/npm_letsencrypt/live/npm-1/"
     
-    # Mailcow's SSL directory
+    # Mailcow SSL directory
     DEST_CERT_DIR="/mailcow-dockerized/data/assets/ssl/"
     # Path to your mailcow-dockerized directory
     MAILCOW_DIR="/mailcow-dockerized/"
@@ -234,11 +233,15 @@ This is the most important step for automation. We will create a script inside t
 1.  Log in to the Mailcow UI at `https://mail.domain.org` with the default credentials (`admin` / `moohoo`).
 2.  Navigate to **Email > Configuration** and add your domain (`domain.org`).
 3.  After adding the domain, a **DNS** button will appear. Click it to see the exact records you need to add to your DNS provider (e.g., Cloudflare). They will include:
-    *   **A Record** for `mail` pointing to `123.123.123.123`.
-    *   **MX Record** for your root domain (`@` or `domain.org`) pointing to `mail.domain.org`.
-    *   **TXT Records** for SPF and DMARC.
-    *   **A `dkim._domainkey` TXT Record**.
-    *   CNAME records for autoconfig and autodiscover.
+  - Type: A, Name: mail, IPv4 address: 123.123.123.123
+  - Type: CNAME, Name: autoconfig, Target: mail.domain.org
+  - Type: CNAME, Name: autodiscover, Target: mail.domain.org
+  - Type: MX, Name: domain.org, Mail server: mail.domain.org
+  - Type: SRV, Name: _autodiscover._tcp, Priority: 0, Weight: 5, Port: 443, Target: mail.domain.org
+  - Type: TLSA, Name: _25._tcp.mail, Usage: 3, Selector: 1, Matching type: 1, Certificate (hexadecimal): xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  - Type: TXT, Name: dkim._domainkey, Content: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  - Type: TXT, Name: _dmarc, Content: "v=DMARC1; p=quarantine; rua=mailto:dmarc-reports@domain.org; adkim=s; aspf=s"
+  - Type: TXT, Name: domain.org, Content: "v=spf1 ip4:123.123.123.123 -all"
 
 ---
 
