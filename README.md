@@ -1,6 +1,6 @@
-# How to Install Mailcow behind Nginx Proxy Manager using a Docker Controller
+# How to Install Mailcow behind Nginx Proxy Manager using a DinD
 
-This guide will walk you through installing Mailcow on a server that already uses Nginx Proxy Manager (NPM). We will use a dedicated "controller" container. This controller will manage the Mailcow installation on the host, providing security and avoiding having a `mailcow-dockerized` directory which contains very important data that is visible to the cloud computing provider.
+This guide will walk you through installing Mailcow on a server that already uses Nginx Proxy Manager (NPM). We will use a dedicated container. This container will manage the Mailcow installation on the host, avoiding having a `mailcow-dockerized` directory which contains very important data that is visible to the cloud computing provider.
 
 ---
 
@@ -50,7 +50,7 @@ volumes:
   npm-data:
     name: npm-data
   npm-letsencrypt:
-    name: npm_letsencrypt
+    name: npm-letsencrypt
 
 networks:
   npm-network:
@@ -70,13 +70,13 @@ networks:
 
 ---
 
-### 3. Deploying Mailcow with a Controller
+### 3. Deploying Mailcow
 
 We will create a simple Debian container whose only job is to manage the Mailcow installation.
 
-**3.1. Create the Mailcow Controller Container**
+**3.1. Create the Mailcow Container**
 
-Create a new `docker-compose.yml` file for the controller:
+Create a new `docker-compose.yml` file:
 
 ```yaml
 services:
@@ -114,22 +114,22 @@ networks:
     external: true
 ```
 
-Run `docker compose up -d` to create the controller.
+Run `docker compose up -d` to deploy.
 
 **3.2. Install and Configure Mailcow**
 
-Now, we will use the controller to install Mailcow.
+Now, we will install Mailcow.
 
-1.  Enter the controller container's shell:
+1.  Enter the to the container's shell:
     ```bash
     docker exec -it mailcow /bin/bash
     ```
 
-2.  (Inside the container) Clone the Mailcow repository. This only needs to be done once:
+<!-- 2.  (Inside the container) Clone the Mailcow repository. This only needs to be done once:
     ```bash
     git clone https://github.com/mailcow/mailcow-dockerized.git /mailcow-dockerized
     cd /mailcow-dockerized
-    ```
+    ``` -->
 
 3.  (Inside the container) Generate the configuration file:
     ```bash
@@ -161,14 +161,13 @@ Now, we will use the controller to install Mailcow.
 
 **3.3. Set Up Automatic Certificate Renewal**
 
-This is the most important step for automation. We will create a script inside the controller that copies the certificate from NPM to Mailcow and then reloads its services.
+This is the most important step for automation. We will create a script that copies the certificate from NPM to Mailcow and then reloads its services.
 
-1.  **Find your NPM Certificate Path**: First, identify the exact folder for your certificate. Run this command **on your host server**:
+1.  **(Inside the container)** Find your NPM Certificate Path: Run this command **on your host server**:
     ```bash
-    # Replace the volume name if you changed it
-    sudo ls -l $(docker volume inspect -f '{{.Mountpoint}}' npm-letsencrypt)/live/
+    ls /npm-letsencrypt/live/
     ```
-    The output will show directories like `npm-1`, `npm-2`, etc. Note the correct one for `mail.domain.org`.
+    The output will show directories like `npm-1`, `npm-2`, etc. Select the last one, if there are more than one.
 
 2.  **(Inside the container)** Create the renewal script:
     Enter to the container by:
@@ -217,8 +216,7 @@ This is the most important step for automation. We will create a script inside t
 
 3.  (Inside the container) Make the script executable and run it once to confirm it works:
     ```bash
-    chmod +x /mailcow-dockerized/mailcow_cert_renewal.sh
-    ./mailcow-dockerized/mailcow_cert_renewal.sh
+    ./mailcow_cert_renewal.sh
     ```
 
 4.  (Inside the container) Create a cron job to run the script automatically. Run `crontab -e` and add the following line to run the script every Sunday at 3:30 AM:
@@ -250,6 +248,6 @@ This is the most important step for automation. We will create a script inside t
 You now have a fully functional mail server! Be sure to:
 1.  **Change the admin password** in the Mailcow UI.
 2.  Create your first user mailbox.
-3.  Configure your email client (e.g., Thunderbird, Outlook) using the details provided by Mailcow.
+3.  Configure your email client (e.g., Thunderbird) using the details provided by Mailcow.
 
 Your setup is now complete, secure, and easy to maintain.
