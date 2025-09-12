@@ -131,7 +131,7 @@ This is the most important step for automation. We will create a script that cop
     ```
     The output will show directories like `npm-1`, `npm-2`, etc. Select the last one, if there are more than one. Export the path, for instance:
     ```bash
-    export SOURCE_CERT_DIR="/npm_letsencrypt/live/npm-1/"
+    export SOURCE_CERT_DIR="/npm-letsencrypt/live/npm-1/"
     ```
     Now copy the certificates:
     ```bash
