@@ -135,10 +135,10 @@ This is the most important step for automation. We will create a script that cop
     ```
     Now copy the certificates:
     ```bash
-    cp -fvL "${SOURCE_CERT_DIR}fullchain.pem" "/mailcow-dockerized/data/assets/ssl/cert.pem"
-    cp -fvL "${SOURCE_CERT_DIR}privkey.pem" "/mailcow-dockerized/data/assets/ssl/key.pem"
-    chmod 644 "/mailcow-dockerized/data/assets/ssl/cert.pem"
-    chmod 640 "/mailcow-dockerized/data/assets/ssl/key.pem"
+    cp -fvL "${SOURCE_CERT_DIR}fullchain.pem" "/opt/mailcow-dockerized/data/assets/ssl/cert.pem"
+    cp -fvL "${SOURCE_CERT_DIR}privkey.pem" "/opt/mailcow-dockerized/data/assets/ssl/key.pem"
+    chmod 644 "/opt/mailcow-dockerized/data/assets/ssl/cert.pem"
+    chmod 640 "/opt/mailcow-dockerized/data/assets/ssl/key.pem"
     ```
 3.  (Inside the container) Create a cron job to run the script automatically. Run `crontab -e` and add the following line to run the script every Sunday at 3:30 AM:
     ```crontab
