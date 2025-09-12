@@ -18,6 +18,7 @@ RUN curl -fsSL https://get.docker.com | sh
 
 # Clone the mailcow-dockerized repository
 RUN git clone https://github.com/mailcow/mailcow-dockerized.git .
+RUN mkdir /mailcow-dockerized/data/assets/ssl/
 
 # Copy the mailcow_cert_renewal.sh file into the container
 COPY mailcow_cert_renewal.sh .
@@ -25,3 +26,4 @@ RUN chmod +x /mailcow-dockerized/mailcow_cert_renewal.sh
 
 
 CMD ["/bin/bash"]
+
