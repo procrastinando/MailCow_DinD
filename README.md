@@ -171,10 +171,11 @@ This is the most important step for automation. We will create a script that cop
     ```
 
 **3.4. Pull the Mailcow images and deploy MailCow**
-    ```
-    docker compose pull
-    docker compose up -d
-    ```
+This is the last step:
+```
+docker compose pull
+docker compose up -d
+```
 
 ---
 
