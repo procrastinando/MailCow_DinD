@@ -5,6 +5,7 @@ WORKDIR /mailcow-dockerized
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+    jq \
     curl \
     git \
     cron \
@@ -21,5 +22,6 @@ RUN git clone https://github.com/mailcow/mailcow-dockerized.git .
 # Copy the mailcow_cert_renewal.sh file into the container
 COPY mailcow_cert_renewal.sh .
 RUN chmod +x /mailcow-dockerized/mailcow_cert_renewal.sh
+
 
 CMD ["/bin/bash"]
