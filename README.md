@@ -125,11 +125,7 @@ Now, we will install Mailcow.
     ```bash
     docker exec -it mailcow /bin/bash
     ```
-23.  (Inside the container) Generate the configuration file:
-    ```
-    ./generate_config.sh
-    ```
-    When prompted, enter your mail hostname (`mail.domain.org`).
+2.  (Inside the container) Generate the configuration file: `./generate_config.sh` When prompted, enter your mail hostname (`mail.domain.org`).
 
 3.  (Inside the container) Edit `mailcow.conf` to work with our reverse proxy:
     ```bash
