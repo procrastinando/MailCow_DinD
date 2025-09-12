@@ -126,7 +126,7 @@ Now, we will install Mailcow.
     docker exec -it mailcow /bin/bash
     ```
 23.  (Inside the container) Generate the configuration file:
-    ```bash
+    ```
     ./generate_config.sh
     ```
     When prompted, enter your mail hostname (`mail.domain.org`).
