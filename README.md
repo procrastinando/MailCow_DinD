@@ -131,7 +131,14 @@ This is the most important step for automation. We will create a script that cop
     ```bash
     ls /npm-letsencrypt/live/
     ```
-    The output will show directories like `npm-1`, `npm-2`, etc. Select the last one, if there are more than one. Create a certificate renewal:
+    The output will show directories like `npm-1`, `npm-2`, etc. Select the last one, if there are more than one. Now copy the certificates to mailcow-dockerized:
+    ```
+    cp -fvL "/npm_letsencrypt/live/npm-1/fullchain.pem" "/mailcow-dockerized/data/assets/ssl/cert.pem"
+    cp -fvL "/npm_letsencrypt/live/npm-1/privkey.pem" "/mailcow-dockerized/data/assets/ssl/key.pem"
+    chmod 644 "/mailcow-dockerized/data/assets/ssl/cert.pem"
+    chmod 640 "/mailcow-dockerized/data/assets/ssl/key.pem"
+    ```
+    Create a certificate renewal:
     ```bash
     nano /mailcow-dockerized/mailcow_cert_renewal.sh
     ```
@@ -171,12 +178,12 @@ This is the most important step for automation. We will create a script that cop
     echo "Certificate renewal process completed."
     ```
 
-3.  (Inside the container) Make the script executable and run it once to confirm it works:
+4.  (Inside the container) Make the script executable and run it once to confirm it works:
     ```bash
     ./mailcow_cert_renewal.sh
     ```
 
-4.  (Inside the container) Create a cron job to run the script automatically. Run `crontab -e` and add the following line to run the script every Sunday at 3:30 AM:
+5.  (Inside the container) Create a cron job to run the script automatically. Run `crontab -e` and add the following line to run the script every Sunday at 3:30 AM:
     ```crontab
     30 3 * * 0 /mailcow-dockerized/mailcow_cert_renewal.sh > /mailcow-dockerized/mailcow_cert_renewal.log 2>&1
     ```
