@@ -162,7 +162,7 @@ This is the most important step for automation. We will create a script that cop
 2.  **(Inside the container)** Create the renewal script:
     Enter to the container by:
     ```bash
-    docker exec -it debian-docker /bin/bash
+    docker exec -it mailcow /bin/bash
     ```
     Create a certificate renewal:
     ```bash
