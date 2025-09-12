@@ -135,7 +135,6 @@ This is the most important step for automation. We will create a script that cop
     ```
     Now copy the certificates:
     ```bash
-    mkdir /mailcow-dockerized/data/assets/ssl/
     cp -fvL "${SOURCE_CERT_DIR}fullchain.pem" "/mailcow-dockerized/data/assets/ssl/cert.pem"
     cp -fvL "${SOURCE_CERT_DIR}privkey.pem" "/mailcow-dockerized/data/assets/ssl/key.pem"
     chmod 644 "/mailcow-dockerized/data/assets/ssl/cert.pem"
