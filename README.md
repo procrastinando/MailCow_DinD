@@ -117,39 +117,7 @@ networks:
 
 Run `docker compose up -d` to deploy.
 
-**3.2. Install and Configure Mailcow**
-
-Now, we will install Mailcow.
-
-1.  Enter the to the container's shell:
-    ```bash
-    docker exec -it mailcow /bin/bash
-    ```
-2.  (Inside the container) Generate the configuration file: `./generate_config.sh` When prompted, enter your mail hostname (`mail.domain.org`).
-
-3.  (Inside the container) Edit `mailcow.conf` to work with our reverse proxy:
-    ```bash
-    nano mailcow.conf
-    ```
-    Make the following critical changes:
-    ```ini
-    # Bind the web interface to these non-standard ports on the HOST
-    HTTP_PORT=8080
-    HTTPS_PORT=8443
-
-    # We use Nginx Proxy Manager for SSL, so disable Let's Encrypt in Mailcow
-    SKIP_LETS_ENCRYPT=y
-    ```
-    Save the file (Ctrl+X, Y, Enter).
-
-4.  (Inside the container) Pull the Mailcow images and deploy them:
-    ```bash
-    docker compose pull
-    docker compose up -d
-    ```
-    Mailcow's containers will now start.
-
-**3.3. Set Up Automatic Certificate Renewal**
+**3.2. Set Up Automatic Certificate Renewal**
 
 This is the most important step for automation. We will create a script that copies the certificate from NPM to Mailcow and then reloads its services.
 
@@ -213,6 +181,38 @@ This is the most important step for automation. We will create a script that cop
     ```crontab
     30 3 * * 0 /mailcow-dockerized/mailcow_cert_renewal.sh > /mailcow-dockerized/mailcow_cert_renewal.log 2>&1
     ```
+
+**3.3. Install and Configure Mailcow**
+
+Now, we will install Mailcow.
+
+1.  Enter the to the container's shell:
+    ```bash
+    docker exec -it mailcow /bin/bash
+    ```
+2.  (Inside the container) Generate the configuration file: `./generate_config.sh` When prompted, enter your mail hostname (`mail.domain.org`).
+
+3.  (Inside the container) Edit `mailcow.conf` to work with our reverse proxy:
+    ```bash
+    nano mailcow.conf
+    ```
+    Make the following critical changes:
+    ```ini
+    # Bind the web interface to these non-standard ports on the HOST
+    HTTP_PORT=8080
+    HTTPS_PORT=8443
+
+    # We use Nginx Proxy Manager for SSL, so disable Let's Encrypt in Mailcow
+    SKIP_LETS_ENCRYPT=y
+    ```
+    Save the file (Ctrl+X, Y, Enter).
+
+4.  (Inside the container) Pull the Mailcow images and deploy them:
+    ```bash
+    docker compose pull
+    docker compose up -d
+    ```
+    Mailcow's containers will now start.
 
 ---
 
