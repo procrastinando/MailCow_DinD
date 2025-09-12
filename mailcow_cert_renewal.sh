@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# --- Configuration ---
-# UPDATE this path to match the certificate directory you found earlier.
-SOURCE_CERT_DIR="/npm-letsencrypt/live/npm-1/"
+# # --- Configuration ---
+# # UPDATE this path to match the certificate directory you found earlier.
+# SOURCE_CERT_DIR="/npm-letsencrypt/live/npm-1/"
 
 # Mailcow SSL directory
 DEST_CERT_DIR="/mailcow-dockerized/data/assets/ssl/"
