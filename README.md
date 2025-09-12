@@ -121,18 +121,17 @@ Run `docker compose up -d` to deploy.
 
 This is the most important step for automation. We will create a script that copies the certificate from NPM to Mailcow and then reloads its services.
 
-1.  **(Inside the container)** Find your NPM Certificate Path: Run this command **on your host server**:
-    ```bash
-    ls /npm-letsencrypt/live/
-    ```
-    The output will show directories like `npm-1`, `npm-2`, etc. Select the last one, if there are more than one.
 
-2.  **(Inside the container)** Create the renewal script:
-    Enter to the container by:
+
+1.  **(Inside the container)** Enter to the container by:
     ```bash
     docker exec -it mailcow /bin/bash
     ```
-    Create a certificate renewal:
+2.  **(Inside the container)** Find your NPM Certificate Path: Run this command **on your host server**:
+    ```bash
+    ls /npm-letsencrypt/live/
+    ```
+    The output will show directories like `npm-1`, `npm-2`, etc. Select the last one, if there are more than one. Create a certificate renewal:
     ```bash
     nano /mailcow-dockerized/mailcow_cert_renewal.sh
     ```
