@@ -121,8 +121,6 @@ Run `docker compose up -d` to deploy.
 
 This is the most important step for automation. We will create a script that copies the certificate from NPM to Mailcow and then reloads its services.
 
-
-
 1.  **(Inside the container)** Enter to the container by:
     ```bash
     docker exec -it mailcow /bin/bash
@@ -131,59 +129,19 @@ This is the most important step for automation. We will create a script that cop
     ```bash
     ls /npm-letsencrypt/live/
     ```
-    The output will show directories like `npm-1`, `npm-2`, etc. Select the last one, if there are more than one. Now copy the certificates to mailcow-dockerized:
+    The output will show directories like `npm-1`, `npm-2`, etc. Select the last one, if there are more than one. Export the path, for instance:
+    ```bash
+    export SOURCE_CERT_DIR="/npm_letsencrypt/live/npm-1/"
     ```
-    cp -fvL "/npm_letsencrypt/live/npm-1/fullchain.pem" "/mailcow-dockerized/data/assets/ssl/cert.pem"
-    cp -fvL "/npm_letsencrypt/live/npm-1/privkey.pem" "/mailcow-dockerized/data/assets/ssl/key.pem"
+    Now copy the certificates:
+    ```bash
+    mkdir /mailcow-dockerized/data/assets/ssl/
+    cp -fvL "${SOURCE_CERT_DIR}fullchain.pem" "/mailcow-dockerized/data/assets/ssl/cert.pem"
+    cp -fvL "${SOURCE_CERT_DIR}privkey.pem" "/mailcow-dockerized/data/assets/ssl/key.pem"
     chmod 644 "/mailcow-dockerized/data/assets/ssl/cert.pem"
     chmod 640 "/mailcow-dockerized/data/assets/ssl/key.pem"
     ```
-    Create a certificate renewal:
-    ```bash
-    nano /mailcow-dockerized/mailcow_cert_renewal.sh
-    ```
-    Copy and paste the entire script below. **Remember to change `npm-X` in the `SOURCE_CERT_DIR` variable to the directory you found in the previous step.**
-
-    ```bash
-    #!/bin/bash
-    
-    # --- Configuration ---
-    # UPDATE this path to match the certificate directory you found earlier.
-    SOURCE_CERT_DIR="/npm_letsencrypt/live/npm-1/"
-    
-    # Mailcow SSL directory
-    DEST_CERT_DIR="/mailcow-dockerized/data/assets/ssl/"
-    # Path to your mailcow-dockerized directory
-    MAILCOW_DIR="/mailcow-dockerized/"
-    
-    # --- Logic ---
-    
-    # 1. Copy the new certificates
-    # The -L flag is important to dereference symbolic links
-    echo "Copying certificates from ${SOURCE_CERT_DIR}..."
-    cp -fvL "${SOURCE_CERT_DIR}fullchain.pem" "${DEST_CERT_DIR}cert.pem"
-    cp -fvL "${SOURCE_CERT_DIR}privkey.pem" "${DEST_CERT_DIR}key.pem"
-    
-    # 2. Set correct permissions for Mailcow's containers
-    chmod 644 "${DEST_CERT_DIR}cert.pem"
-    chmod 640 "${DEST_CERT_DIR}key.pem"
-    
-    # 3. Reload services within Docker to apply the new certs
-    echo "Reloading Mailcow services to apply new certificates..."
-    cd "${MAILCOW_DIR}" || exit
-    docker compose exec postfix-mailcow postfix reload
-    docker compose exec dovecot-mailcow doveadm reload
-    docker compose exec nginx-mailcow nginx -s reload
-    
-    echo "Certificate renewal process completed."
-    ```
-
-4.  (Inside the container) Make the script executable and run it once to confirm it works:
-    ```bash
-    ./mailcow_cert_renewal.sh
-    ```
-
-5.  (Inside the container) Create a cron job to run the script automatically. Run `crontab -e` and add the following line to run the script every Sunday at 3:30 AM:
+3.  (Inside the container) Create a cron job to run the script automatically. Run `crontab -e` and add the following line to run the script every Sunday at 3:30 AM:
     ```crontab
     30 3 * * 0 /mailcow-dockerized/mailcow_cert_renewal.sh > /mailcow-dockerized/mailcow_cert_renewal.log 2>&1
     ```
