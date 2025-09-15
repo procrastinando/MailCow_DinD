@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Certs path
+SOURCE_CERT_DIR="/npm-letsencrypt/live/npm-1/"
 # Mailcow SSL directory
 DEST_CERT_DIR="/opt/mailcow-dockerized/data/assets/ssl/"
 # Path to your mailcow-dockerized directory
