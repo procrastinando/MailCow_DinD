@@ -1,5 +1,5 @@
 services:
-  mailcow_dind:
+  dind:
     build:
       context: https://github.com/procrastinando/MailCow_DinD.git#main
     container_name: mailcow
@@ -7,20 +7,18 @@ services:
     privileged: true
     ports:
       - "25:25"
-      - "8080:8080" # select the port that you prefer
+      - "8078:8078" # select the port that you prefer
       - "8443:8443" # select the port that you prefer
       - "587:587"
       - "993:993"
       - "465:465"
       - "995:995"
       - "4190:4190"
-    networks:
-      - npm-network
     volumes:
       # Volume for mailcow data
       - data:/opt/mailcow-dockerized
       # External volume for Let's Encrypt
-      - npm-letsencrypt:/npm-letsencrypt
+      - npm_letsencrypt:/npm_letsencrypt
       # Persists the INNER Docker's data (images, volumes, etc.)
       - docker:/var/lib/docker
     restart: unless-stopped
@@ -29,8 +27,4 @@ volumes:
   data:
   docker:
   npm_letsencrypt:
-    external: true
-
-networks:
-  npm_network:
     external: true

@@ -168,7 +168,7 @@ This is the most important step for automation. We will create a script that cop
     ```
     Create a cron job to run the script automatically. Run `crontab -e` and add the following line to run the script every Sunday at 3:30 AM:
     ```crontab
-    30 3 * * 0 /mailcow-dockerized/mailcow_cert_renewal.sh > /mailcow-dockerized/mailcow_cert_renewal.log 2>&1
+    30 3 * * 0 /opt/mailcow-dockerized/mailcow_cert_renewal.sh > /opt/mailcow-dockerized/mailcow_cert_renewal.log 2>&1
     ```
 
 4.  Pull the Mailcow images and deploy MailCow**
