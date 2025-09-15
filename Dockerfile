@@ -1,5 +1,5 @@
-# FROM docker:28.4-dind
-FROM docker:dind
+FROM docker:28.4-dind
+# FROM docker:dind
 
 # Set a working directory inside the image
 WORKDIR /opt/mailcow-dockerized
