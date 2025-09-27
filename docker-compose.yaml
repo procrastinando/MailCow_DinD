@@ -1,30 +1,36 @@
 services:
-  dind:
+  debian:
     build:
       context: https://github.com/procrastinando/MailCow_DinD.git#main
     container_name: mailcow
-    # Privileged mode is REQUIRED for DinD
     privileged: true
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
     ports:
       - "25:25"
-      - "8078:8078" # select the port that you prefer
+      - "8080:8080" # select the port that you prefer
       - "8443:8443" # select the port that you prefer
       - "587:587"
       - "993:993"
       - "465:465"
       - "995:995"
       - "4190:4190"
+    networks:
+      - npm-network
     volumes:
-      # Volume for mailcow data
-      - data:/opt/mailcow-dockerized
-      # External volume for Let's Encrypt
-      - npm_letsencrypt:/npm_letsencrypt
-      # Persists the INNER Docker's data (images, volumes, etc.)
+      - data:/mailcow-dockerized
       - docker:/var/lib/docker
+      - npm-letsencrypt:/npm-letsencrypt
     restart: unless-stopped
 
 volumes:
   data:
   docker:
-  npm_letsencrypt:
+  npm-letsencrypt:
+    external: true
+
+networks:
+  npm-network:
+    name: npm-network
     external: true
