@@ -85,6 +85,9 @@ services:
       context: https://github.com/procrastinando/MailCow_DinD.git#main
     container_name: mailcow
     privileged: true
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
     ports:
       - "25:25"
       - "8080:8080" # select the port that you prefer
@@ -94,7 +97,6 @@ services:
       - "465:465"
       - "995:995"
       - "4190:4190"
-    command: command: /bin/sh -c "dockerd --dns 1.1.1.1 --dns 8.8.8.8 > /dev/null 2>&1 & sleep 2 && tail -f /dev/null"
     networks:
       - npm-network
     volumes:
